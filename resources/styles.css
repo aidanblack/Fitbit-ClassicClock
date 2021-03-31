@@ -1,0 +1,40 @@
+.background {
+  viewport-fill: black;
+}
+
+.primary {
+  font-size: 25;
+  fill: white;
+  text-anchor: middle;
+}
+
+.secondary {
+  fill: #FFFFFF;
+  opacity: 0.66;
+}
+
+.tertiary {
+  fill: #FFFFFF;
+  opacity: 0.33;
+}
+
+.accent {
+  fill: #FF0000;
+  opacity: 0.66;
+}
+
+#steps {
+  fill: #EFC12B;
+}
+
+#distance {
+  fill: #376EEF;
+}
+
+#zone {
+  fill: #EA7D1E;
+}
+
+#battery {
+  fill: #3FD300;
+}

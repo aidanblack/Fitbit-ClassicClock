@@ -1,0 +1,190 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="clock" class="background">
+
+    <defs>
+        <symbol id="heartSymbol">
+            <text id="heartIcon" class="primary" y="125">&#9829;
+                <animate attributeName="opacity" begin="enable" from="1" to="0.3" dur="1" final="restore" />
+                <animate attributeName="font-size" begin="enable" from="25" to="20" dur="1" final="restore" />
+            </text>
+        </symbol>
+
+    </defs>
+
+    <g transform="translate(50%,50%)">
+        <g id="numbers">
+            <text class="primary" y="-115">XII</text>
+            <g transform="rotate(30)"><text class="primary" y="-115">I</text></g>
+            <g transform="rotate(60)"><text class="primary" y="-115">II</text></g>
+            <g transform="rotate(120)"><text class="primary" y="-115">IIII</text></g>
+            <g transform="rotate(150)"><text class="primary" y="-115">V</text></g>
+            <!--g transform="rotate(180)"><text class="primary" y="-115">VI</text></g-->
+            <text id="bpm" class="primary" x="0" y="95" text-length="3">--</text>
+            <use id="heartRate" href="#heartSymbol" />
+            <g transform="rotate(210)"><text class="primary" y="-115">VII</text></g>
+            <g transform="rotate(240)"><text class="primary" y="-115">VIII</text></g>
+            <!--g transform="rotate(270)"><text class="primary" y="-115">IX</text></g-->
+        <text id="temperature" class="primary" x="-60" y="9" text-length="4">--</text>
+        <image id="weatherIcon" x="-125" y="-20" width="40" height="40" href="weather/4d.png" fill="#CCCCCC" />
+            <g transform="rotate(300)"><text class="primary" y="-115">X</text></g>
+            <g transform="rotate(330)"><text class="primary" y="-115">XI</text></g>
+        </g>
+        <text id="dateBox" x="90" y="9" class="primary" text-length="10">DateText</text>
+
+        <g id="icons">
+            <image href="battery.png" width="30" height="30" x="-135" y="-140" fill="#3FD300"/>
+            <image href="footprints.png" width="25" height="42" x="113" y="-144" fill="#EFC12B" />
+            <image href="signpost.png" width="25" height="37" x="113" y="106" fill="#376EEF" />
+            <image href="dart.png" width="25" height="25" x="-137" y="111" fill="#EA7D1E" />
+        </g>
+
+        <g class="primary">
+            <line y1="-152" y2="-140" stroke-width="3" />
+            <line x1="152" x2="140" stroke-width="3" />
+            <line y1="152" y2="140" stroke-width="3" />
+            <line x1="-152" x2="-140" stroke-width="3" />
+        </g>
+        <g transform="rotate(30)" class="secondary">
+            <circle cx="0" cy="-150" r="3" />
+            <circle cx="150" cy="0" r="3" />
+            <circle cx="0" cy="150" r="3" />
+            <circle cx="-150" cy="0" r="3" />
+        </g>
+        <g transform="rotate(60)" class="secondary">
+            <circle cx="0" cy="-150" r="3" />
+            <circle cx="150" cy="0" r="3" />
+            <circle cx="0" cy="150" r="3" />
+            <circle cx="-150" cy="0" r="3" />
+        </g>
+
+        <g transform="rotate(6)">
+            <g class="tertiary">
+                <circle cx="0" cy="-150" r="3" />
+                <circle cx="150" cy="0" r="3" />
+                <circle cx="0" cy="150" r="3" />
+                <circle cx="-150" cy="0" r="3" />
+            </g>
+            <g transform="rotate(60)" class="tertiary">
+                <circle cx="0" cy="-150" r="3" />
+                <circle cx="150" cy="0" r="3" />
+                <circle cx="0" cy="150" r="3" />
+                <circle cx="-150" cy="0" r="3" />
+            </g>
+        </g>
+        <g transform="rotate(12)">
+            <g class="tertiary">
+                <circle cx="0" cy="-150" r="3" />
+                <circle cx="150" cy="0" r="3" />
+                <circle cx="0" cy="150" r="3" />
+                <circle cx="-150" cy="0" r="3" />
+            </g>
+            <g transform="rotate(60)" class="tertiary">
+                <circle cx="0" cy="-150" r="3" />
+                <circle cx="150" cy="0" r="3" />
+                <circle cx="0" cy="150" r="3" />
+                <circle cx="-150" cy="0" r="3" />
+            </g>
+        </g>
+        <g transform="rotate(18)">
+            <g class="tertiary">
+                <circle cx="0" cy="-150" r="3" />
+                <circle cx="150" cy="0" r="3" />
+                <circle cx="0" cy="150" r="3" />
+                <circle cx="-150" cy="0" r="3" />
+            </g>
+            <g transform="rotate(60)" class="tertiary">
+                <circle cx="0" cy="-150" r="3" />
+                <circle cx="150" cy="0" r="3" />
+                <circle cx="0" cy="150" r="3" />
+                <circle cx="-150" cy="0" r="3" />
+            </g>
+        </g>
+        <g transform="rotate(24)">
+            <g class="tertiary">
+                <circle cx="0" cy="-150" r="3" />
+                <circle cx="150" cy="0" r="3" />
+                <circle cx="0" cy="150" r="3" />
+                <circle cx="-150" cy="0" r="3" />
+            </g>
+            <g transform="rotate(60)" class="tertiary">
+                <circle cx="0" cy="-150" r="3" />
+                <circle cx="150" cy="0" r="3" />
+                <circle cx="0" cy="150" r="3" />
+                <circle cx="-150" cy="0" r="3" />
+            </g>
+        </g>
+
+        <g id="steps" transform="rotate(30)">
+            <g id="steps4" transform="rotate(6)">
+                <circle cx="0" cy="-150" r="3" />
+            </g>
+            <g id="steps3" transform="rotate(12)">
+                <circle cx="0" cy="-150" r="3" />
+            </g>
+            <g id="steps2" transform="rotate(18)">
+                <circle cx="0" cy="-150" r="3" />
+            </g>
+            <g id="steps1" transform="rotate(24)">
+                <circle cx="0" cy="-150" r="3" />
+            </g>
+        </g>
+        <g id="distance" transform="rotate(30)">
+            <g id="distance4" transform="rotate(6)">
+                <circle cx="150" cy="0" r="3" />
+            </g>
+            <g id="distance3" transform="rotate(12)">
+                <circle cx="150" cy="0" r="3" />
+            </g>
+            <g id="distance2" transform="rotate(18)">
+                <circle cx="150" cy="0" r="3" />
+            </g>
+            <g id="distance1" transform="rotate(24)">
+                <circle cx="150" cy="0" r="3" />
+            </g>
+        </g>
+        <g id="zone" transform="rotate(30)">
+            <g id="zone1" transform="rotate(6)">
+                <circle cx="0" cy="150" r="3" />
+            </g>
+            <g id="zone2" transform="rotate(12)">
+                <circle cx="0" cy="150" r="3" />
+            </g>
+            <g id="zone3" transform="rotate(18)">
+                <circle cx="0" cy="150" r="3" />
+            </g>
+            <g id="zone4" transform="rotate(24)">
+                <circle cx="0" cy="150" r="3" />
+            </g>
+        </g>
+        <g id="battery" transform="rotate(30)">
+            <g id="battery1" transform="rotate(6)">
+                <circle cx="-150" cy="0" r="3" />
+            </g>
+            <g id="battery2" transform="rotate(12)">
+                <circle cx="-150" cy="0" r="3" />
+            </g>
+            <g id="battery3" transform="rotate(18)">
+                <circle cx="-150" cy="0" r="3" />
+            </g>
+            <g id="battery4" transform="rotate(24)">
+                <circle cx="-150" cy="0" r="3" />
+            </g>
+        </g>
+
+        <g>
+            <g id="hours">
+                <line x1="0" y1="0" x2="0" y2="-80" class="secondary" stroke-width="7">
+                </line>
+            </g>
+            <g id="minutes">
+                <line x1="0" y1="0" x2="0" y2="-120" class="secondary" stroke-width="5">
+                </line>
+            </g>
+            <g id="seconds">
+                <line x1="0" y1="0" x2="0" y2="-140" class="accent" stroke-width="3">
+                </line>
+            </g>
+        </g>
+
+        <circle r="8" class="secondary" />
+    </g>
+</svg>
