@@ -25,4 +25,4 @@ Settings:
 
 Code is present to support Always On Displays, but the necessary permissions are not currently enabled.
 
-Please feel free to submit a pull request with any improvements or bug fixes.
+This clock has only been tested on Fitbit Versa 3, so please feel free to submit a pull request with any improvements or bug fixes.
