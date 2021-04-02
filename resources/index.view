@@ -15,23 +15,28 @@
             <text class="primary" y="-115">XII</text>
             <g transform="rotate(30)"><text class="primary" y="-115">I</text></g>
             <g transform="rotate(60)"><text class="primary" y="-115">II</text></g>
+            <g transform="rotate(90)" id="iii"><text class="primary" y="-115">III</text></g>
             <g transform="rotate(120)"><text class="primary" y="-115">IIII</text></g>
             <g transform="rotate(150)"><text class="primary" y="-115">V</text></g>
-            <!--g transform="rotate(180)"><text class="primary" y="-115">VI</text></g-->
-            <text id="bpm" class="primary" x="0" y="95" text-length="3">--</text>
-            <use id="heartRate" href="#heartSymbol" />
+            <g transform="rotate(180)" id="vi"><text class="primary" y="-115">VI</text></g>
+            <g id="heartrateBox" visibility="hidden">
+                <text id="bpm" class="primary" x="0" y="95" text-length="3">--</text>
+                <use id="heartRate" href="#heartSymbol" />
+            </g>
             <g transform="rotate(210)"><text class="primary" y="-115">VII</text></g>
             <g transform="rotate(240)"><text class="primary" y="-115">VIII</text></g>
-            <!--g transform="rotate(270)"><text class="primary" y="-115">IX</text></g-->
-        <text id="temperature" class="primary" x="-60" y="9" text-length="4">--</text>
-        <image id="weatherIcon" x="-125" y="-20" width="40" height="40" href="weather/4d.png" fill="#CCCCCC" />
+            <g transform="rotate(270)" id="ix"><text class="primary" y="-115">IX</text></g>
+            <g id="weatherBox" visibility="hidden">
+                <text id="temperature" class="primary" x="-60" y="9" text-length="4">--</text>
+                <image id="weatherIcon" x="-125" y="-20" width="40" height="40" href="weather/4d.png" fill="#CCCCCC" />
+            </g>
             <g transform="rotate(300)"><text class="primary" y="-115">X</text></g>
             <g transform="rotate(330)"><text class="primary" y="-115">XI</text></g>
         </g>
-        <text id="dateBox" x="90" y="9" class="primary" text-length="10">DateText</text>
+        <text id="dateBox" visibility="hidden" x="90" y="9" class="primary" text-length="10">DateText</text>
 
         <g id="icons">
-            <image href="battery.png" width="30" height="30" x="-135" y="-140" fill="#3FD300"/>
+            <image href="battery.png" width="30" height="30" x="-135" y="-140" fill="#3FD300" />
             <image href="footprints.png" width="25" height="42" x="113" y="-144" fill="#EFC12B" />
             <image href="signpost.png" width="25" height="37" x="113" y="106" fill="#376EEF" />
             <image href="dart.png" width="25" height="25" x="-137" y="111" fill="#EA7D1E" />
