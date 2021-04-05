@@ -54,24 +54,29 @@ clock.ontick = (evt) => {
   let minutes = now.getMinutes();
   let seconds = now.getSeconds();
 
-  if (!settings.hideDate) {
+  if (!settings.hideDate && !display.aodActive && display.on) {
     dateBox.text = dateText;
     dateBox.style.visibility = "visible";
     document.getElementById("iii").style.visibility = "hidden";
   }
-  else {
+  else if (settings.hideDate && !display.aodActive && display.on) {
     dateBox.style.visibility = "hidden";
     document.getElementById("iii").style.visibility = "visible";
   }
+  else {
+    dateBox.style.visibility = "hidden";
+    document.getElementById("iii").style.visibility = "hidden";
+  }
+
   hourHand.groupTransform.rotate.angle = ((360 / 12) * hours) + ((360 / 12 / 60) * minutes);
   minuteHand.groupTransform.rotate.angle = (360 / 60) * minutes + ((360 / 60 / 60) * seconds);
   secondsHand.groupTransform.rotate.angle = seconds * 6;
   heartRate.animate("enable");
 
-  if (settings.hideGoals)
-    document.getElementById("icons").style.visibility = "hidden";
-  else
+  if (!settings.hideGoals && !display.aodActive && display.on)
     document.getElementById("icons").style.visibility = "visible";
+  else
+    document.getElementById("icons").style.visibility = "hidden";
   var stepPercent = 0;
   var distancePercent = 0;
   var zonePercent = 0;
@@ -124,28 +129,36 @@ clock.ontick = (evt) => {
   if (battery.chargeLevel >= 80) document.getElementById("battery4").style.opacity = 1;
   else document.getElementById("battery4").style.opacity = 0.5;
 
-  if (!settings.hideWeather) {
+  if (!settings.hideWeather && !display.aodActive && display.on) {
     document.getElementById("weatherBox").style.visibility = "visible";
     document.getElementById("ix").style.visibility = "hidden";
     weather.fetch(30 * 60 * 1000) // return the cached value if it is less than 30 minutes old 
       .then(weather => processWeather(weather))
       .catch(error => console.log(JSON.stringify(error)));
   }
-  else {
+  else if(settings.hideWeather && !display.aodActive && display.on) {
     document.getElementById("weatherBox").style.visibility = "hidden";
     document.getElementById("ix").style.visibility = "visible";
   }
+  else {
+    document.getElementById("weatherBox").style.visibility = "hidden";
+    document.getElementById("ix").style.visibility = "hidden";
+  }
 
-  if (!settings.hideHeartRate) {
+  if (!settings.hideHeartRate && !display.aodActive && display.on) {
     document.getElementById("heartrateBox").style.visibility = "visible";
     document.getElementById("vi").style.visibility = "hidden";
   }
-  else {
+  else if (settings.hideHeartRate && !display.aodActive && display.on) {
     document.getElementById("heartrateBox").style.visibility = "hidden";
     document.getElementById("vi").style.visibility = "visible";
   }
+  else {
+    document.getElementById("heartrateBox").style.visibility = "hidden";
+    document.getElementById("vi").style.visibility = "hidden";
+  }
 
-  if (!display.aodActive && display.on && body.present && !settings.hideHeartRate) {
+  if (!settings.hideHeartRate && !display.aodActive && display.on && body.present) {
     hrm.start();
     document.getElementById("bpm").style.visibility = "visible";
   } else {
@@ -175,18 +188,36 @@ if (display.aodAvailable && me.permissions.granted("access_aod")) {
   display.addEventListener("change", () => {
     // Is AOD inactive and the display is on?
     if (!display.aodActive && display.on) {
+      body.start();
+      hrm.start();
       clock.granularity = "seconds";
       // Show elements & start sensors
       document.getElementById("seconds").style.visibility = "visible";
       document.getElementById("numbers").style.visibility = "visible";
       document.getElementById("icons").style.visibility = "visible";
+      document.getElementById("heartrateBox").style.visibility = "visible";
+      document.getElementById("dateBox").style.visibility = "visible";
+      document.getElementById("weatherBox").style.visibility = "visible";
+      document.getElementById("bpm").style.visibility = "visible";
+      document.getElementById("iii").style.visibility = "visible";
+      document.getElementById("vi").style.visibility = "visible";
+      document.getElementById("ix").style.visibility = "visible";
       document.getElementsByClassName("tertiary").forEach(showMinutes);
     } else {
+      body.stop();
+      hrm.stop();
       clock.granularity = "minutes";
       // Hide elements & stop sensors
       document.getElementById("seconds").style.visibility = "hidden";
       document.getElementById("numbers").style.visibility = "hidden";
       document.getElementById("icons").style.visibility = "hidden";
+      document.getElementById("heartrateBox").style.visibility = "hidden";
+      document.getElementById("dateBox").style.visibility = "hidden";
+      document.getElementById("weatherBox").style.visibility = "hidden";
+      document.getElementById("bpm").style.visibility = "hidden";
+      document.getElementById("iii").style.visibility = "hidden";
+      document.getElementById("vi").style.visibility = "hidden";
+      document.getElementById("ix").style.visibility = "hidden";
       document.getElementsByClassName("tertiary").forEach(hideMinutes);
     }
   });
@@ -200,20 +231,6 @@ if (HeartRateSensor) {
     document.getElementById("bpm").text = hrm.heartRate;
   });
 }
-
-// if (BodyPresenceSensor) {
-//   const body = new BodyPresenceSensor();
-//   body.addEventListener("reading", () => {
-//     if (!display.aodActive && display.on && body.present && !settings.showHeartRate) {
-//       hrm.start();
-//       document.getElementById("bpm").style.visibility = "visible";
-//     } else {
-//       hrm.stop();
-//       document.getElementById("bpm").style.visibility = "hidden";
-//     }
-//   });
-//   body.start();
-// }
 
 function hideMinutes(item, index) {
   item.style.visibility = "hidden";
