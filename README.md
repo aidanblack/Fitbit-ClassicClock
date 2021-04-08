@@ -1,5 +1,5 @@
 # Fitbit-ClassicClock
-## Analog clock with sensor info for Fitbit Versa 3
+## Analog clock with sensor info for Fitbit Versa 3 and Sense
 ### [Get this clock face from the Fitbit Gallery](https://gallery.fitbit.com/details/ee20db7e-81ed-49d6-89b2-79dcb149418d)
 This is an analog clock with selected sensor information, plus date and weather. Included sensors are: 
 + Battery
