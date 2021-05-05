@@ -27,10 +27,10 @@
     },
     "defaultLanguage": "en-US"
   },
-  "scripts": {
-    "build": "fitbit-build"
-  },
   "dependencies": {
     "fitbit-weather": "^0.2.3"
+  },
+  "scripts": {
+    "build": "fitbit-build"
   }
 }
