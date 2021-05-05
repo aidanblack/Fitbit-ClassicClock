@@ -1,3 +1,4 @@
 debug.log
 companion/index.js
 build/app.fba
+node_modules/
