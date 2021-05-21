@@ -11,6 +11,7 @@
     "wipeColor": "",
     "requestedPermissions": [
       "access_activity",
+      "access_aod",
       "access_heart_rate",
       "access_internet",
       "access_location",
@@ -28,6 +29,7 @@
     "defaultLanguage": "en-US"
   },
   "dependencies": {
+    "fitbit": "0.0.7",
     "fitbit-weather": "^0.2.3"
   },
   "scripts": {
