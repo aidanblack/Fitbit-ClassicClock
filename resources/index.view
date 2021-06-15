@@ -28,11 +28,11 @@
 
         <text id="dateBox" visibility="hidden" x="90" y="9" class="primary" text-length="10">DateText</text>
         <g id="weatherBox" visibility="hidden">
-            <text id="temperature" class="primary" x="-60" y="9" text-length="4">--</text>
+            <text id="temperature" class="primary" x="-60" y="9" text-length="5">--</text>
             <image id="weatherIcon" x="-125" y="-20" width="40" height="40" href="weather/4d.png" fill="#CCCCCC" />
         </g>
         <g id="heartrateBox" visibility="hidden">
-            <text id="bpm" class="primary" x="0" y="95" text-length="3">--</text>
+            <text id="bpm" class="primary" x="0" y="95" text-length="5">--</text>
             <use id="heartRate" href="#heartSymbol" />
         </g>
 

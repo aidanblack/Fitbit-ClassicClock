@@ -41,8 +41,9 @@ if (BodyPresenceSensor) {
 const hrm;
 if (HeartRateSensor) {
   hrm = new HeartRateSensor({ frequency: 1 });
+  hrm.start();
   hrm.addEventListener("reading", () => {
-    document.getElementById("bpm").text = hrm.heartRate;
+    processHeartRate();
   });
 }
 
@@ -112,48 +113,9 @@ function showMinutes(item, index) {
   item.style.visibility = "visible";
 }
 
-// ***** Clock *****
-
-const dateBox = document.getElementById("dateBox")
-const hourHand = document.getElementById("hours");
-const minuteHand = document.getElementById("minutes");
-const secondsHand = document.getElementById("seconds");
-const heartRate = document.getElementById("heartRate");
-
-clock.granularity = "seconds";
-
-clock.ontick = (evt) => {
-  let now = evt.date;
-  processDate(now);
-
-  let hours = now.getHours();
-  hours = hours % 12 || 12;
-  let minutes = now.getMinutes();
-  let seconds = now.getSeconds();
-
-  hourHand.groupTransform.rotate.angle = ((360 / 12) * hours) + ((360 / 12 / 60) * minutes);
-  minuteHand.groupTransform.rotate.angle = (360 / 60) * minutes + ((360 / 60 / 60) * seconds);
-  secondsHand.groupTransform.rotate.angle = seconds * 6;
-  
-  processHeartRate();
-  processGoals();
-  processBattery();
-
-  if (!settings.hideWeather && !display.aodActive && display.on) {
-    weather.fetch(30 * 60 * 1000) // return the cached value if it is less than 30 minutes old 
-      .then(weather => processWeather(weather))
-      .catch(error => console.log(JSON.stringify(error)));
-  }
-  else processWeather(weather);
-}
-
-// ***** Date *****
-
-function processDate(date) {
-  let dateText = date.toLocaleString('default', { month: 'short' }).substring(4, 10);
-
+function processDisplay() {
+  // Date
   if (!settings.hideDate) {
-    dateBox.text = dateText;
     dateBox.style.visibility = "visible";
     document.getElementById("iii").style.visibility = "hidden";
   }
@@ -165,24 +127,11 @@ function processDate(date) {
     dateBox.style.visibility = "hidden";
     document.getElementById("iii").style.visibility = "hidden";
   }
-}
 
-// ***** Weather *****
-
-function processWeather(weather) {
+  // Weather
   if (!settings.hideWeather && !display.aodActive && display.on) {
     document.getElementById("weatherBox").style.visibility = "visible";
     document.getElementById("ix").style.visibility = "hidden";
-    if (settings.tempUnit.selected == "1")
-      document.getElementById("temperature").text = `${Math.round(weather.temperatureF)}°`;
-    else
-      document.getElementById("temperature").text = `${Math.round(weather.temperatureC)}°`;
-    var weatherIcon = document.getElementById("weatherIcon");
-    var weatherCode = weather.conditionCode;
-    var dayNight;
-    if (weather.timestamp > weather.sunrise && weather.timestamp < weather.sunset) dayNight = "d";
-    else dayNight = "n";
-    weatherIcon.href = `weather/${weatherCode}${dayNight}.png`;
   }
   else if(settings.hideWeather && !display.aodActive && display.on) {
     document.getElementById("weatherBox").style.visibility = "hidden";
@@ -192,15 +141,11 @@ function processWeather(weather) {
     document.getElementById("weatherBox").style.visibility = "hidden";
     document.getElementById("ix").style.visibility = "hidden";
   }
-}
-
-// ***** Heart Rate *****
-
-function processHeartRate() {
+  
+  // Heart Rate
   if (!settings.hideHeartRate && !display.aodActive && display.on) {
     document.getElementById("heartrateBox").style.visibility = "visible";
     document.getElementById("vi").style.visibility = "hidden";
-    heartRate.animate("enable");
   }
   else if (settings.hideHeartRate && !display.aodActive && display.on) {
     document.getElementById("heartrateBox").style.visibility = "hidden";
@@ -210,37 +155,14 @@ function processHeartRate() {
     document.getElementById("heartrateBox").style.visibility = "hidden";
     document.getElementById("vi").style.visibility = "hidden";
   }
-
   if (!settings.hideHeartRate && !display.aodActive && display.on && body.present) {
-    hrm.start();
     document.getElementById("bpm").style.visibility = "visible";
+    document.getElementById("bpm").text = hrm.heartRate;
   } else {
-    hrm.stop();
     document.getElementById("bpm").style.visibility = "hidden";
   }
-}
 
-// ***** Goals *****
-
-function processGoals() {
-  var stepPercent = 0;
-  var distancePercent = 0;
-  var zonePercent = 0;
-
-  if (me.permissions.granted("access_activity")) {
-    var stepCount = today.adjusted.steps;
-    var stepGoal = goals.steps;
-    stepPercent = stepCount / stepGoal * 100;
-
-    var distanceCount = today.adjusted.distance;
-    var distanceGoal = goals.distance;
-    distancePercent = distanceCount / distanceGoal * 100;
-
-    var zoneCount = today.adjusted.activeZoneMinutes.total;
-    var zoneGoal = goals.activeZoneMinutes.total;
-    zonePercent = zoneCount / zoneGoal * 100;
-  }
-
+  // Goals
   if (!settings.hideGoals && !display.aodActive && display.on) {
     document.getElementById("icons").style.visibility = "visible";
   }
@@ -274,7 +196,96 @@ function processGoals() {
     document.getElementById("steps").style.visibility = "visible";
     document.getElementById("distance").style.visibility = "visible";
     document.getElementById("zone").style.visibility = "visible";
-  
+  }
+}
+
+// ***** Clock *****
+
+const dateBox = document.getElementById("dateBox")
+const hourHand = document.getElementById("hours");
+const minuteHand = document.getElementById("minutes");
+const secondsHand = document.getElementById("seconds");
+const heartRate = document.getElementById("heartRate");
+
+clock.granularity = "seconds";
+
+clock.ontick = (evt) => {
+  let now = evt.date;
+  processDate(now);
+
+  let hours = now.getHours();
+  hours = hours % 12 || 12;
+  let minutes = now.getMinutes();
+  let seconds = now.getSeconds();
+
+  hourHand.groupTransform.rotate.angle = ((360 / 12) * hours) + ((360 / 12 / 60) * minutes);
+  minuteHand.groupTransform.rotate.angle = (360 / 60) * minutes + ((360 / 60 / 60) * seconds);
+  secondsHand.groupTransform.rotate.angle = seconds * 6;
+
+  processDisplay();
+}
+
+// ***** Date *****
+
+function processDate(date) {
+  let dateText = date.toLocaleString('default', { month: 'short' }).substring(4, 10);
+  dateBox.text = dateText;
+}
+
+// ***** Weather *****
+
+function processWeather(weather) {
+  if (!settings.hideWeather && !display.aodActive && display.on) {
+    if (settings.tempUnit.selected == "1")
+      document.getElementById("temperature").text = `${Math.round(weather.temperatureF)}°`;
+    else
+      document.getElementById("temperature").text = `${Math.round(weather.temperatureC)}°`;
+    var weatherIcon = document.getElementById("weatherIcon");
+    var weatherCode = weather.conditionCode;
+    var dayNight;
+    if (weather.timestamp > weather.sunrise && weather.timestamp < weather.sunset) dayNight = "d";
+    else dayNight = "n";
+    weatherIcon.href = `weather/${weatherCode}${dayNight}.png`;
+  }
+  setTimeout(processWeather, 600000);
+}
+
+// ***** Heart Rate *****
+
+function processHeartRate() {
+  if (!settings.hideHeartRate && !display.aodActive && display.on) {
+    heartRate.animate("enable");
+  }
+
+  if (!settings.hideHeartRate && !display.aodActive && display.on && body.present) {
+    hrm.start();
+  } else {
+    hrm.stop();
+  }
+}
+
+// ***** Goals *****
+
+function processGoals() {
+  var stepPercent = 0;
+  var distancePercent = 0;
+  var zonePercent = 0;
+
+  if (me.permissions.granted("access_activity")) {
+    var stepCount = today.adjusted.steps;
+    var stepGoal = goals.steps;
+    stepPercent = stepCount / stepGoal * 100;
+
+    var distanceCount = today.adjusted.distance;
+    var distanceGoal = goals.distance;
+    distancePercent = distanceCount / distanceGoal * 100;
+
+    var zoneCount = today.adjusted.activeZoneMinutes.total;
+    var zoneGoal = goals.activeZoneMinutes.total;
+    zonePercent = zoneCount / zoneGoal * 100;
+  }
+
+  if (!settings.hideGoals) {
     document.getElementById("steps").style.fill = "#EFC12B";
     if (stepPercent >= 20) document.getElementById("steps1").style.opacity = 1;
     else document.getElementById("steps1").style.opacity = 0.5;
@@ -305,6 +316,7 @@ function processGoals() {
     if (zonePercent >= 80) document.getElementById("zone4").style.opacity = 1;
     else document.getElementById("zone4").style.opacity = 0.5;
   }
+  setTimeout(processGoals, 60000);
 }
 
 // ***** Battery *****
@@ -318,4 +330,18 @@ function processBattery() {
   else document.getElementById("battery3").style.opacity = 0.5;
   if (battery.chargeLevel >= 80) document.getElementById("battery4").style.opacity = 1;
   else document.getElementById("battery4").style.opacity = 0.5;
+
+  setTimeout(processBattery, 600000);
 }
+
+// ***** Trigger Updates *****
+
+processGoals();
+processBattery();
+
+if (!settings.hideWeather && !display.aodActive && display.on) {
+  weather.fetch(30 * 60 * 1000) // return the cached value if it is less than 30 minutes old 
+    .then(weather => processWeather(weather))
+    .catch(error => console.log(JSON.stringify(error)));
+}
+else processWeather(weather);

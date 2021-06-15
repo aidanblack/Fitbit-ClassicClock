@@ -30,7 +30,9 @@
   },
   "dependencies": {
     "fitbit": "0.0.7",
-    "fitbit-weather": "^0.2.3"
+    "fitbit-weather": "^0.2.3",
+    "fp-ts": "^2.10.5",
+    "io-ts": "^2.2.16"
   },
   "scripts": {
     "build": "fitbit-build"
