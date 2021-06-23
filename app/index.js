@@ -1,4 +1,4 @@
-import clock from "clock";
+import Clock from "./clock";
 import document from "document";
 import * as messaging from "messaging";
 import { display } from "display";
@@ -30,6 +30,20 @@ messaging.peerSocket.addEventListener("message", (evt) => {
     if(evt.data.key === "tempUnit") updateWeather();
   }
 });
+
+// ***** Clock *****
+
+const dateBox = document.getElementById("dateBox")
+const hourHand = document.getElementById("hours");
+const minuteHand = document.getElementById("minutes");
+const secondsHand = document.getElementById("seconds");
+
+var clock = new Clock(
+  dateBox,
+  hourHand,
+  minuteHand,
+  secondsHand
+);
 
 // ***** Initialize Body & Heart Rate *****
 
@@ -114,7 +128,7 @@ function showMinutes(item, index) {
   item.style.visibility = "visible";
 }
 
-function processDisplay() {
+clock.updateDisplay = () => {
   // Date
   if (!settings.hideDate) {
     dateBox.style.visibility = "visible";
@@ -200,43 +214,6 @@ function processDisplay() {
   }
 }
 
-// ***** Clock *****
-
-const dateBox = document.getElementById("dateBox")
-const hourHand = document.getElementById("hours");
-const minuteHand = document.getElementById("minutes");
-const secondsHand = document.getElementById("seconds");
-const heartRate = document.getElementById("heartRate");
-
-clock.granularity = "seconds";
-
-clock.ontick = (evt) => {
-  let now = evt.date;
-  processDate(now);
-
-  let hours = now.getHours();
-  hours = hours % 12 || 12;
-  let minutes = now.getMinutes();
-  let seconds = now.getSeconds();
-
-  hourHand.groupTransform.rotate.angle = ((360 / 12) * hours) + ((360 / 12 / 60) * minutes);
-  minuteHand.groupTransform.rotate.angle = (360 / 60) * minutes + ((360 / 60 / 60) * seconds);
-  secondsHand.groupTransform.rotate.angle = seconds * 6;
-
-  if((clock.granularity === "minutes"  && (minutes + 5) % 5 === 0) || seconds === 0) processGoals();
-  if((clock.granularity === "minutes"  && (minutes + 5) % 5 === 0) || seconds === 0) processBattery();
-  if((clock.granularity === "minutes" || (seconds === 0)) && (minutes + 10) % 10 === 0) updateWeather();
-
-  processDisplay();
-}
-
-// ***** Date *****
-
-function processDate(date) {
-  let dateText = date.toLocaleString('default', { month: 'short' }).substring(4, 10);
-  dateBox.text = dateText;
-}
-
 // ***** Weather *****
 
 function processWeather(weather) {
@@ -256,7 +233,7 @@ function processWeather(weather) {
   console.log("Weather Updated");
 }
 
-function updateWeather() {
+clock.updateWeather = () =>  {
   if (!settings.hideWeather && !display.aodActive && display.on) {
     weather.fetch(30 * 60 * 1000) // return the cached value if it is less than 30 minutes old 
       .then(weather => processWeather(weather))
@@ -265,6 +242,8 @@ function updateWeather() {
 }
 
 // ***** Heart Rate *****
+
+const heartRate = document.getElementById("heartRate");
 
 function processHeartRate() {
   if (!settings.hideHeartRate && !display.aodActive && display.on) {
@@ -280,7 +259,7 @@ function processHeartRate() {
 
 // ***** Goals *****
 
-function processGoals() {
+clock.updateGoals = () => {
   var stepPercent = 0;
   var distancePercent = 0;
   var zonePercent = 0;
@@ -335,7 +314,7 @@ function processGoals() {
 
 // ***** Battery *****
 
-function processBattery() {
+clock.updateBattery = () =>  {
   if (battery.chargeLevel >= 20) document.getElementById("battery1").style.opacity = 1;
   else document.getElementById("battery1").style.opacity = 0.5;
   if (battery.chargeLevel >= 40) document.getElementById("battery2").style.opacity = 1;
@@ -350,6 +329,7 @@ function processBattery() {
 
 // ***** Trigger Updates *****
 
-processGoals();
-processBattery();
-updateWeather();
+clock.updateGoals();
+clock.updateBattery();
+clock.updateWeather();
+clock.startClock();
