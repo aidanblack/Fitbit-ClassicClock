@@ -27,6 +27,7 @@ messaging.peerSocket.addEventListener("message", (evt) => {
   if (evt && evt.data && evt.data.key) {
     settings[evt.data.key] = evt.data.value;
     //console.log(`${evt.data.key} : ${evt.data.value}`); // Good for debugging
+    if(evt.data.key === "tempUnit") updateWeather();
   }
 });
 
@@ -222,6 +223,10 @@ clock.ontick = (evt) => {
   minuteHand.groupTransform.rotate.angle = (360 / 60) * minutes + ((360 / 60 / 60) * seconds);
   secondsHand.groupTransform.rotate.angle = seconds * 6;
 
+  if((clock.granularity === "minutes"  && (minutes + 5) % 5 === 0) || seconds === 0) processGoals();
+  if((clock.granularity === "minutes"  && (minutes + 5) % 5 === 0) || seconds === 0) processBattery();
+  if((clock.granularity === "minutes" || (seconds === 0)) && (minutes + 10) % 10 === 0) updateWeather();
+
   processDisplay();
 }
 
@@ -247,7 +252,16 @@ function processWeather(weather) {
     else dayNight = "n";
     weatherIcon.href = `weather/${weatherCode}${dayNight}.png`;
   }
-  setTimeout(processWeather, 600000);
+
+  console.log("Weather Updated");
+}
+
+function updateWeather() {
+  if (!settings.hideWeather && !display.aodActive && display.on) {
+    weather.fetch(30 * 60 * 1000) // return the cached value if it is less than 30 minutes old 
+      .then(weather => processWeather(weather))
+      .catch(error => console.log(JSON.stringify(error)));
+  }
 }
 
 // ***** Heart Rate *****
@@ -316,7 +330,7 @@ function processGoals() {
     if (zonePercent >= 80) document.getElementById("zone4").style.opacity = 1;
     else document.getElementById("zone4").style.opacity = 0.5;
   }
-  setTimeout(processGoals, 60000);
+  console.log("Goals Updated");
 }
 
 // ***** Battery *****
@@ -331,17 +345,11 @@ function processBattery() {
   if (battery.chargeLevel >= 80) document.getElementById("battery4").style.opacity = 1;
   else document.getElementById("battery4").style.opacity = 0.5;
 
-  setTimeout(processBattery, 600000);
+  console.log("Battery Updated");
 }
 
 // ***** Trigger Updates *****
 
 processGoals();
 processBattery();
-
-if (!settings.hideWeather && !display.aodActive && display.on) {
-  weather.fetch(30 * 60 * 1000) // return the cached value if it is less than 30 minutes old 
-    .then(weather => processWeather(weather))
-    .catch(error => console.log(JSON.stringify(error)));
-}
-else processWeather(weather);
+updateWeather();
