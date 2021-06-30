@@ -1,18 +1,20 @@
-import Clock from "./clock";
-import Weather from "./weather";
 import document from "document";
-import * as messaging from "messaging";
 import { display } from "display";
-import { me } from "appbit";
 import { HeartRateSensor } from "heart-rate";
 import { BodyPresenceSensor } from "body-presence";
+import { me } from "appbit";
 import { today } from "user-activity";
 import { goals } from "user-activity";
 import { battery } from "power";
 import { preferences } from "user-settings";
+import * as messaging from "messaging";
 import * as simpleSettings from "./device-settings";
+import Clock from "./clock";
+import Weather from "./weather";
+import Face from "./face";
 
 // ***** Settings *****
+console.log("set up settings");
 
 const settings;
 
@@ -34,6 +36,7 @@ messaging.peerSocket.addEventListener("message", (evt) => {
 });
 
 // ***** Clock *****
+console.log("set up clock");
 
 const dateBox = document.getElementById("dateBox")
 const hourHand = document.getElementById("hours");
@@ -48,6 +51,7 @@ var clock = new Clock(
 );
 
 // ***** Initialize Body & Heart Rate *****
+console.log("initialize body and heart rate");
 
 const body = null;
 if (BodyPresenceSensor) {
@@ -65,6 +69,9 @@ if (HeartRateSensor) {
 }
 
 // ***** Display *****
+console.log("set up display");
+
+var face = new Face(settings, body, hrm, dateBox);
 
 if (display.aodAvailable && me.permissions.granted("access_aod")) {
   // tell the system we support AOD
@@ -84,122 +91,21 @@ if (display.aodAvailable && me.permissions.granted("access_aod")) {
           hrm.stop();
           clock.granularity = "minutes";
       }
-      updateDisplay();
+      face.updateDisplay();
   });
 }
 
-function updateDisplay() {
-  // Is AOD inactive and the display is on?
-  if (!display.aodActive && display.on) {
-      document.getElementsByClassName("tertiary").forEach((item, index) => {
-          item.style.visibility = "visible";
-      });
-      document.getElementById("numbers").style.visibility = "visible";
-      document.getElementById("seconds").style.visibility = "visible";
-      document.getElementById("steps").style.visibility = "visible";
-      document.getElementById("distance").style.visibility = "visible";
-      document.getElementById("zone").style.visibility = "visible";
-  }
-  else {
-      document.getElementsByClassName("tertiary").forEach((item, index) => {
-          item.style.visibility = "hidden";
-      });
-      document.getElementById("numbers").style.visibility = "hidden";
-      document.getElementById("seconds").style.visibility = "hidden";
-      document.getElementById("steps").style.visibility = "hidden";
-      document.getElementById("distance").style.visibility = "hidden";
-      document.getElementById("zone").style.visibility = "hidden";
-  }
-
-  // Date
-  if (!settings.hideDate) {
-      dateBox.style.visibility = "visible";
-      document.getElementById("iii").style.visibility = "hidden";
-  }
-  else if (settings.hideDate && !display.aodActive && display.on) {
-      dateBox.style.visibility = "hidden";
-      document.getElementById("iii").style.visibility = "visible";
-  }
-  else {
-      dateBox.style.visibility = "hidden";
-      document.getElementById("iii").style.visibility = "hidden";
-  }
-
-  // Weather
-  if (!settings.hideWeather && !display.aodActive && display.on) {
-      document.getElementById("weatherBox").style.visibility = "visible";
-      document.getElementById("ix").style.visibility = "hidden";
-  }
-  else if (settings.hideWeather && !display.aodActive && display.on) {
-      document.getElementById("weatherBox").style.visibility = "hidden";
-      document.getElementById("ix").style.visibility = "visible";
-  }
-  else {
-      document.getElementById("weatherBox").style.visibility = "hidden";
-      document.getElementById("ix").style.visibility = "hidden";
-  }
-
-  // Heart Rate
-  if (!settings.hideHeartRate && !display.aodActive && display.on) {
-      document.getElementById("heartrateBox").style.visibility = "visible";
-      document.getElementById("vi").style.visibility = "hidden";
-  }
-  else if (settings.hideHeartRate && !display.aodActive && display.on) {
-      document.getElementById("heartrateBox").style.visibility = "hidden";
-      document.getElementById("vi").style.visibility = "visible";
-  }
-  else {
-      document.getElementById("heartrateBox").style.visibility = "hidden";
-      document.getElementById("vi").style.visibility = "hidden";
-  }
-  if (!settings.hideHeartRate && !display.aodActive && display.on && body.present) {
-      document.getElementById("bpm").style.visibility = "visible";
-      document.getElementById("bpm").text = hrm.heartRate;
-  } else {
-      document.getElementById("bpm").style.visibility = "hidden";
-  }
-
-  // Goals
-  if (!settings.hideGoals && !display.aodActive && display.on) {
-      document.getElementById("icons").style.visibility = "visible";
-  }
-  else
-      document.getElementById("icons").style.visibility = "hidden";
-
-  if (settings.hideGoals) {
-      document.getElementById("steps").style.fill = "#FFFFFF";
-      document.getElementById("steps1").style.opacity = 0.33;
-      document.getElementById("steps2").style.opacity = 0.33;
-      document.getElementById("steps3").style.opacity = 0.33;
-      document.getElementById("steps4").style.opacity = 0.33;
-      document.getElementById("distance").style.fill = "#FFFFFF";
-      document.getElementById("distance1").style.opacity = 0.33;
-      document.getElementById("distance2").style.opacity = 0.33;
-      document.getElementById("distance3").style.opacity = 0.33;
-      document.getElementById("distance4").style.opacity = 0.33;
-      document.getElementById("zone").style.fill = "#FFFFFF";
-      document.getElementById("zone1").style.opacity = 0.33;
-      document.getElementById("zone2").style.opacity = 0.33;
-      document.getElementById("zone3").style.opacity = 0.33;
-      document.getElementById("zone4").style.opacity = 0.33;
-  }
-  else {
-      document.getElementById("steps").style.visibility = "visible";
-      document.getElementById("distance").style.visibility = "visible";
-      document.getElementById("zone").style.visibility = "visible";
-  }
-}
-
-clock.updateDisplay = updateDisplay;
-
+clock.updateDisplay = () => { face.updateDisplay() };
 
 // ***** Weather *****
+console.log("set up weather");
 
 var weather = new Weather(document.getElementById("temperature"), document.getElementById("weatherIcon"));
 weather.tempUnit = settings.tempUnit.selected;
 clock.weather = weather;
 
 // ***** Heart Rate *****
+console.log("set up heart rate");
 
 const heartRate = document.getElementById("heartRate");
 
@@ -216,6 +122,7 @@ function processHeartRate() {
 }
 
 // ***** Goals *****
+console.log("set up goals");
 
 clock.updateGoals = () => {
   var stepPercent = 0;
@@ -271,6 +178,7 @@ clock.updateGoals = () => {
 }
 
 // ***** Battery *****
+console.log("set up battery");
 
 clock.updateBattery = () =>  {
   if (battery.chargeLevel >= 20) document.getElementById("battery1").style.opacity = 1;
@@ -286,6 +194,7 @@ clock.updateBattery = () =>  {
 }
 
 // ***** Trigger Updates *****
+console.log("start updates");
 
 clock.updateGoals();
 clock.updateBattery();
