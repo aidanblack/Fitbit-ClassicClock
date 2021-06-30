@@ -23,6 +23,7 @@ if (companion.launchReasons.settingsChanged) {
 }
 
 function sendValue(key, val) {
+    //console.log(`${key} : ${val}`); // Good for debugging
     if (val) {
         sendSettingData({
             key: key,

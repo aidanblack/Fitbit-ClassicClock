@@ -4,7 +4,7 @@ class Clock {
     updateDisplay = function() {};
     updateBattery = function() {};
     updateGoals = function() {};
-    updateWeather = function() {};
+    weather;
 
     constructor(dateBox, hourHand, minuteHand, secondsHand) {
         try {
@@ -25,6 +25,7 @@ class Clock {
         hours = hours % 12 || 12;
         let minutes = now.getMinutes();
         let seconds = now.getSeconds();
+        let currentTimestamp = new Date(now).getTime();
 
         this.hourHand.groupTransform.rotate.angle = ((360 / 12) * hours) + ((360 / 12 / 60) * minutes);
         this.minuteHand.groupTransform.rotate.angle = (360 / 60) * minutes + ((360 / 60 / 60) * seconds);
@@ -32,7 +33,8 @@ class Clock {
 
         if((clock.granularity === "minutes"  && (minutes + 5) % 5 === 0) || seconds === 0) this.updateGoals();
         if((clock.granularity === "minutes"  && (minutes + 5) % 5 === 0) || seconds === 0) this.updateBattery();
-        if((clock.granularity === "minutes" || (seconds === 0)) && (minutes + 10) % 10 === 0) this.updateWeather();
+        if(this.weather.timestamp === 0 || currentTimestamp - this.weather.timestamp > (30 * 60 * 1000)) this.weather.updateWeather();
+        //console.log(`${this.weather.timestamp} : ${currentTimestamp}`);
 
         this.updateDisplay();
     }

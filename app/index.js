@@ -1,4 +1,5 @@
 import Clock from "./clock";
+import Weather from "./weather";
 import document from "document";
 import * as messaging from "messaging";
 import { display } from "display";
@@ -9,8 +10,6 @@ import { today } from "user-activity";
 import { goals } from "user-activity";
 import { battery } from "power";
 import { preferences } from "user-settings";
-import * as util from "../common/utils";
-import * as weather from 'fitbit-weather/app';
 import * as simpleSettings from "./device-settings";
 
 // ***** Settings *****
@@ -27,7 +26,10 @@ messaging.peerSocket.addEventListener("message", (evt) => {
   if (evt && evt.data && evt.data.key) {
     settings[evt.data.key] = evt.data.value;
     //console.log(`${evt.data.key} : ${evt.data.value}`); // Good for debugging
-    if(evt.data.key === "tempUnit") updateWeather();
+    if(evt.data.key === "tempUnit") {
+      weather.tempUnit = evt.data.value.selected;
+      clock.weather.updateWeather();
+    }
   }
 });
 
@@ -70,176 +72,132 @@ if (display.aodAvailable && me.permissions.granted("access_aod")) {
 
   // respond to display change events
   display.addEventListener("change", () => {
-    // Is AOD inactive and the display is on?
-    if (!display.aodActive && display.on) {
-      body.start();
-      hrm.start();
-      clock.granularity = "seconds";
-      // Show elements & start sensors
-      document.getElementsByClassName("tertiary").forEach(showMinutes);
-      document.getElementById("numbers").style.visibility = "visible";
-      document.getElementById("seconds").style.visibility = "visible";
-      if(!settings.hideDate) document.getElementById("dateBox").style.visibility = "visible";
-      else document.getElementById("iii").style.visibility = "visible";
-      if(!settings.hideHeartRate) {
-        document.getElementById("heartrateBox").style.visibility = "visible";
-        document.getElementById("bpm").style.visibility = "visible";
+      // Is AOD inactive and the display is on?
+      if (!display.aodActive && display.on) {
+          body.start();
+          hrm.start();
+          clock.granularity = "seconds";
+          clock.weather.updateWeather();
       }
-      else document.getElementById("vi").style.visibility = "visible";
-      if(!settings.hideWeather) document.getElementById("weatherBox").style.visibility = "visible";
-      else document.getElementById("ix").style.visibility = "visible";
-      if(!settings.hideGoals) {
-        document.getElementById("icons").style.visibility = "visible";
+      else {
+          body.stop();
+          hrm.stop();
+          clock.granularity = "minutes";
       }
-      document.getElementById("steps").style.visibility = "visible";
-      document.getElementById("distance").style.visibility = "visible";
-      document.getElementById("zone").style.visibility = "visible";  
-  }
-    else {
-      body.stop();
-      hrm.stop();
-      clock.granularity = "minutes";
-      // Hide elements & stop sensors
-      document.getElementById("seconds").style.visibility = "hidden";
-      document.getElementById("numbers").style.visibility = "hidden";
-      document.getElementById("icons").style.visibility = "hidden";
-      if(settings.hideGoals) {
-        document.getElementById("steps").style.visibility = "hidden";
-        document.getElementById("distance").style.visibility = "hidden";
-        document.getElementById("zone").style.visibility = "hidden";
-      }
-      document.getElementById("heartrateBox").style.visibility = "hidden";
-      if(settings.hideDate) document.getElementById("dateBox").style.visibility = "hidden";
-      document.getElementById("weatherBox").style.visibility = "hidden";
-      document.getElementById("bpm").style.visibility = "hidden";
-      document.getElementById("iii").style.visibility = "hidden";
-      document.getElementById("vi").style.visibility = "hidden";
-      document.getElementById("ix").style.visibility = "hidden";
-      document.getElementsByClassName("tertiary").forEach(hideMinutes);
-    }
+      updateDisplay();
   });
 }
 
-function hideMinutes(item, index) {
-  item.style.visibility = "hidden";
-}
-
-function showMinutes(item, index) {
-  item.style.visibility = "visible";
-}
-
-clock.updateDisplay = () => {
-  // Date
-  if (!settings.hideDate) {
-    dateBox.style.visibility = "visible";
-    document.getElementById("iii").style.visibility = "hidden";
-  }
-  else if (settings.hideDate && !display.aodActive && display.on) {
-    dateBox.style.visibility = "hidden";
-    document.getElementById("iii").style.visibility = "visible";
+function updateDisplay() {
+  // Is AOD inactive and the display is on?
+  if (!display.aodActive && display.on) {
+      document.getElementsByClassName("tertiary").forEach((item, index) => {
+          item.style.visibility = "visible";
+      });
+      document.getElementById("numbers").style.visibility = "visible";
+      document.getElementById("seconds").style.visibility = "visible";
+      document.getElementById("steps").style.visibility = "visible";
+      document.getElementById("distance").style.visibility = "visible";
+      document.getElementById("zone").style.visibility = "visible";
   }
   else {
-    dateBox.style.visibility = "hidden";
-    document.getElementById("iii").style.visibility = "hidden";
+      document.getElementsByClassName("tertiary").forEach((item, index) => {
+          item.style.visibility = "hidden";
+      });
+      document.getElementById("numbers").style.visibility = "hidden";
+      document.getElementById("seconds").style.visibility = "hidden";
+      document.getElementById("steps").style.visibility = "hidden";
+      document.getElementById("distance").style.visibility = "hidden";
+      document.getElementById("zone").style.visibility = "hidden";
+  }
+
+  // Date
+  if (!settings.hideDate) {
+      dateBox.style.visibility = "visible";
+      document.getElementById("iii").style.visibility = "hidden";
+  }
+  else if (settings.hideDate && !display.aodActive && display.on) {
+      dateBox.style.visibility = "hidden";
+      document.getElementById("iii").style.visibility = "visible";
+  }
+  else {
+      dateBox.style.visibility = "hidden";
+      document.getElementById("iii").style.visibility = "hidden";
   }
 
   // Weather
   if (!settings.hideWeather && !display.aodActive && display.on) {
-    document.getElementById("weatherBox").style.visibility = "visible";
-    document.getElementById("ix").style.visibility = "hidden";
+      document.getElementById("weatherBox").style.visibility = "visible";
+      document.getElementById("ix").style.visibility = "hidden";
   }
-  else if(settings.hideWeather && !display.aodActive && display.on) {
-    document.getElementById("weatherBox").style.visibility = "hidden";
-    document.getElementById("ix").style.visibility = "visible";
+  else if (settings.hideWeather && !display.aodActive && display.on) {
+      document.getElementById("weatherBox").style.visibility = "hidden";
+      document.getElementById("ix").style.visibility = "visible";
   }
   else {
-    document.getElementById("weatherBox").style.visibility = "hidden";
-    document.getElementById("ix").style.visibility = "hidden";
+      document.getElementById("weatherBox").style.visibility = "hidden";
+      document.getElementById("ix").style.visibility = "hidden";
   }
-  
+
   // Heart Rate
   if (!settings.hideHeartRate && !display.aodActive && display.on) {
-    document.getElementById("heartrateBox").style.visibility = "visible";
-    document.getElementById("vi").style.visibility = "hidden";
+      document.getElementById("heartrateBox").style.visibility = "visible";
+      document.getElementById("vi").style.visibility = "hidden";
   }
   else if (settings.hideHeartRate && !display.aodActive && display.on) {
-    document.getElementById("heartrateBox").style.visibility = "hidden";
-    document.getElementById("vi").style.visibility = "visible";
+      document.getElementById("heartrateBox").style.visibility = "hidden";
+      document.getElementById("vi").style.visibility = "visible";
   }
   else {
-    document.getElementById("heartrateBox").style.visibility = "hidden";
-    document.getElementById("vi").style.visibility = "hidden";
+      document.getElementById("heartrateBox").style.visibility = "hidden";
+      document.getElementById("vi").style.visibility = "hidden";
   }
   if (!settings.hideHeartRate && !display.aodActive && display.on && body.present) {
-    document.getElementById("bpm").style.visibility = "visible";
-    document.getElementById("bpm").text = hrm.heartRate;
+      document.getElementById("bpm").style.visibility = "visible";
+      document.getElementById("bpm").text = hrm.heartRate;
   } else {
-    document.getElementById("bpm").style.visibility = "hidden";
+      document.getElementById("bpm").style.visibility = "hidden";
   }
 
   // Goals
   if (!settings.hideGoals && !display.aodActive && display.on) {
-    document.getElementById("icons").style.visibility = "visible";
+      document.getElementById("icons").style.visibility = "visible";
   }
   else
-    document.getElementById("icons").style.visibility = "hidden";
-  
-  if (settings.hideGoals) {
-    document.getElementById("steps").style.fill = "#FFFFFF";
-    document.getElementById("steps1").style.opacity = 0.33;
-    document.getElementById("steps2").style.opacity = 0.33;
-    document.getElementById("steps3").style.opacity = 0.33;
-    document.getElementById("steps4").style.opacity = 0.33;
-    document.getElementById("distance").style.fill = "#FFFFFF";
-    document.getElementById("distance1").style.opacity = 0.33;
-    document.getElementById("distance2").style.opacity = 0.33;
-    document.getElementById("distance3").style.opacity = 0.33;
-    document.getElementById("distance4").style.opacity = 0.33;
-    document.getElementById("zone").style.fill = "#FFFFFF";
-    document.getElementById("zone1").style.opacity = 0.33;
-    document.getElementById("zone2").style.opacity = 0.33;
-    document.getElementById("zone3").style.opacity = 0.33;
-    document.getElementById("zone4").style.opacity = 0.33;
+      document.getElementById("icons").style.visibility = "hidden";
 
-    if(display.aodActive) {
-      document.getElementById("steps").style.visibility = "hidden";
-      document.getElementById("distance").style.visibility = "hidden";
-      document.getElementById("zone").style.visibility = "hidden";
-    }
+  if (settings.hideGoals) {
+      document.getElementById("steps").style.fill = "#FFFFFF";
+      document.getElementById("steps1").style.opacity = 0.33;
+      document.getElementById("steps2").style.opacity = 0.33;
+      document.getElementById("steps3").style.opacity = 0.33;
+      document.getElementById("steps4").style.opacity = 0.33;
+      document.getElementById("distance").style.fill = "#FFFFFF";
+      document.getElementById("distance1").style.opacity = 0.33;
+      document.getElementById("distance2").style.opacity = 0.33;
+      document.getElementById("distance3").style.opacity = 0.33;
+      document.getElementById("distance4").style.opacity = 0.33;
+      document.getElementById("zone").style.fill = "#FFFFFF";
+      document.getElementById("zone1").style.opacity = 0.33;
+      document.getElementById("zone2").style.opacity = 0.33;
+      document.getElementById("zone3").style.opacity = 0.33;
+      document.getElementById("zone4").style.opacity = 0.33;
   }
   else {
-    document.getElementById("steps").style.visibility = "visible";
-    document.getElementById("distance").style.visibility = "visible";
-    document.getElementById("zone").style.visibility = "visible";
+      document.getElementById("steps").style.visibility = "visible";
+      document.getElementById("distance").style.visibility = "visible";
+      document.getElementById("zone").style.visibility = "visible";
   }
 }
+
+clock.updateDisplay = updateDisplay;
+
 
 // ***** Weather *****
 
-function processWeather(weather) {
-  if (!settings.hideWeather && !display.aodActive && display.on) {
-    if (settings.tempUnit.selected == "1")
-      document.getElementById("temperature").text = `${Math.round(weather.temperatureF)}°`;
-    else
-      document.getElementById("temperature").text = `${Math.round(weather.temperatureC)}°`;
-    var weatherIcon = document.getElementById("weatherIcon");
-    var weatherCode = weather.conditionCode;
-    var dayNight;
-    if (weather.timestamp > weather.sunrise && weather.timestamp < weather.sunset) dayNight = "d";
-    else dayNight = "n";
-    weatherIcon.href = `weather/${weatherCode}${dayNight}.png`;
-  }
-
-  console.log("Weather Updated");
-}
-
-clock.updateWeather = () =>  {
-  if (!settings.hideWeather && !display.aodActive && display.on) {
-    weather.fetch(30 * 60 * 1000) // return the cached value if it is less than 30 minutes old 
-      .then(weather => processWeather(weather))
-      .catch(error => console.log(JSON.stringify(error)));
-  }
-}
+var weather = new Weather(document.getElementById("temperature"), document.getElementById("weatherIcon"));
+weather.tempUnit = settings.tempUnit.selected;
+clock.weather = weather;
 
 // ***** Heart Rate *****
 
@@ -331,5 +289,4 @@ clock.updateBattery = () =>  {
 
 clock.updateGoals();
 clock.updateBattery();
-clock.updateWeather();
 clock.startClock();
