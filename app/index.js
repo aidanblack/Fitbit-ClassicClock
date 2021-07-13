@@ -53,12 +53,16 @@ var clockController = new Clock(
 console.log("initialize body and heart rate");
 
 const heartRate = document.getElementById("heartRate");
+const body = null;
+const hrm;
 
 function processHeartRate() {
   if (!settings.hideHeartRate && display.on) {
     heartRate.animate("enable");
   }
+}
 
+function processBodyPresence() {
   if (!settings.hideHeartRate && display.on && body.present) {
     hrm.start();
   } else {
@@ -66,21 +70,18 @@ function processHeartRate() {
   }
 }
 
-const body = null;
-if (BodyPresenceSensor) {
-  body = new BodyPresenceSensor();
-  body.start();
-  body.addEventListener("reading", () => {
+if (HeartRateSensor) {
+  hrm = new HeartRateSensor({ frequency: 1 });
+  hrm.addEventListener("reading", () => {
     processHeartRate();
   });
 }
 
-const hrm;
-if (HeartRateSensor) {
-  hrm = new HeartRateSensor({ frequency: 1 });
-  hrm.start();
-  hrm.addEventListener("reading", () => {
-    processHeartRate();
+if (BodyPresenceSensor) {
+  body = new BodyPresenceSensor();
+  body.start();
+  body.addEventListener("reading", () => {
+    processBodyPresence();
   });
 }
 
@@ -97,16 +98,17 @@ if (display.aodAvailable && me.permissions.granted("access_aod")) {
   display.addEventListener("change", () => {
     // Is the display on?
     if (!display.aodActive && display.on) {
-      body.start();
       hrm.start();
+      body.start();
       clock.granularity = "seconds";
       clockController.weather.updateWeather();
     }
     else {
-      body.stop();
       hrm.stop();
+      body.stop();
       clock.granularity = "minutes";
     }
+    processHeartRate();
     face.updateDisplay();
   });
 }
@@ -115,16 +117,17 @@ else {
   display.addEventListener("change", () => {
     // Is the display on?
     if (display.on) {
-      body.start();
       hrm.start();
+      body.start();
       clock.granularity = "seconds";
       clockController.weather.updateWeather();
     }
     else {
-      body.stop();
       hrm.stop();
+      body.stop();
       clock.granularity = "minutes";
     }
+    processHeartRate();
     face.updateDisplay();
   });
 }
@@ -135,7 +138,13 @@ clockController.updateDisplay = () => { face.updateDisplay() };
 console.log("set up weather");
 
 var weather = new Weather(document.getElementById("temperature"), document.getElementById("weatherIcon"));
-weather.tempUnit = settings.tempUnit.selected;
+try {
+  weather.tempUnit = settings.tempUnit.selected || "Celsius";
+}
+catch (err) {
+  console.log(err);
+  weather.tempUnit = "Celsius";
+}
 clockController.weather = weather;
 
 // ***** Goals *****
