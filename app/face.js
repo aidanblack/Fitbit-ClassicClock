@@ -80,7 +80,7 @@ class Face {
         }
         if (!this.settings.hideHeartRate && !display.aodActive && display.on && this.body.present) {
             document.getElementById("bpm").style.visibility = "visible";
-            document.getElementById("bpm").text = this.hrm.heartRate;
+            document.getElementById("bpm").text = this.hrm.heartRate ?? "--";
         } else {
             document.getElementById("bpm").style.visibility = "hidden";
         }
