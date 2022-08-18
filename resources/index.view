@@ -11,7 +11,7 @@
     </defs>
 
     <g transform="translate(50%,50%)">
-        <g id="numbers">
+        <g id="numerals" visibility="hidden">
             <text class="primary" y="-115">XII</text>
             <g transform="rotate(30)"><text class="primary" y="-115">I</text></g>
             <g transform="rotate(60)"><text class="primary" y="-115">II</text></g>
@@ -24,6 +24,21 @@
             <g transform="rotate(270)" id="ix"><text class="primary" y="-115">IX</text></g>
             <g transform="rotate(300)"><text class="primary" y="-115">X</text></g>
             <g transform="rotate(330)"><text class="primary" y="-115">XI</text></g>
+        </g>
+
+        <g id="numbers">
+            <text class="primary" y="-115">12</text>
+            <g transform="rotate(30)"><text class="primary" y="-115">1</text></g>
+            <g transform="rotate(60)"><text class="primary" y="-115">2</text></g>
+            <g transform="rotate(90)" id="3"><text class="primary" y="-115">3</text></g>
+            <g transform="rotate(300)"><text class="primary" y="132">4</text></g>
+            <g transform="rotate(330)"><text class="primary" y="132">5</text></g>
+            <g id="6"><text class="primary" y="132">6</text></g>
+            <g transform="rotate(30)"><text class="primary" y="132">7</text></g>
+            <g transform="rotate(60)"><text class="primary" y="132">8</text></g>
+            <g transform="rotate(270)" id="9"><text class="primary" y="-115">9</text></g>
+            <g transform="rotate(300)"><text class="primary" y="-115">10</text></g>
+            <g transform="rotate(330)"><text class="primary" y="-115">11</text></g>
         </g>
 
         <text id="dateBox" visibility="hidden" x="90" y="9" class="primary" text-length="10">DateText</text>
@@ -191,6 +206,6 @@
             </g>
         </g>
 
-        <circle r="8" class="secondary" />
+        <circle r="8" class="primary" />
     </g>
 </svg>

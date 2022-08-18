@@ -41,42 +41,51 @@ class Face {
         if (!this.settings.hideDate) {
             this.dateBox.style.visibility = "visible";
             document.getElementById("iii").style.visibility = "hidden";
+            document.getElementById("3").style.visibility = "hidden";
         }
         else if (this.settings.hideDate && !display.aodActive && display.on) {
             this.dateBox.style.visibility = "hidden";
             document.getElementById("iii").style.visibility = "visible";
+            document.getElementById("3").style.visibility = "visible";
         }
         else {
             this.dateBox.style.visibility = "hidden";
             document.getElementById("iii").style.visibility = "hidden";
+            document.getElementById("3").style.visibility = "hidden";
         }
       
         // Weather
         if (!this.settings.hideWeather && !display.aodActive && display.on) {
             document.getElementById("weatherBox").style.visibility = "visible";
             document.getElementById("ix").style.visibility = "hidden";
+            document.getElementById("9").style.visibility = "hidden";
         }
         else if (this.settings.hideWeather && !display.aodActive && display.on) {
             document.getElementById("weatherBox").style.visibility = "hidden";
             document.getElementById("ix").style.visibility = "visible";
+            document.getElementById("9").style.visibility = "visible";
         }
         else {
             document.getElementById("weatherBox").style.visibility = "hidden";
             document.getElementById("ix").style.visibility = "hidden";
+            document.getElementById("9").style.visibility = "hidden";
         }
       
         // Heart Rate
         if (!this.settings.hideHeartRate && !display.aodActive && display.on) {
             document.getElementById("heartrateBox").style.visibility = "visible";
             document.getElementById("vi").style.visibility = "hidden";
+            document.getElementById("6").style.visibility = "hidden";
         }
         else if (this.settings.hideHeartRate && !display.aodActive && display.on) {
             document.getElementById("heartrateBox").style.visibility = "hidden";
             document.getElementById("vi").style.visibility = "visible";
+            document.getElementById("6").style.visibility = "visible";
         }
         else {
             document.getElementById("heartrateBox").style.visibility = "hidden";
             document.getElementById("vi").style.visibility = "hidden";
+            document.getElementById("6").style.visibility = "hidden";
         }
         if (!this.settings.hideHeartRate && !display.aodActive && display.on && this.body.present) {
             document.getElementById("bpm").style.visibility = "visible";
