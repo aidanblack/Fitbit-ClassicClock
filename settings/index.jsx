@@ -27,6 +27,10 @@ function classicClockSettings(props) {
                     settingsKey="hideGoals"
                     label="Hide Goals"
                 />
+                <Toggle
+                    settingsKey="arabicNumerals"
+                    label="Use Arabic Numerals"
+                />
             </Section>
         </Page>
     );

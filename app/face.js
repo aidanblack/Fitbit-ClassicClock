@@ -1,5 +1,6 @@
 import { display } from "display";
 import document from "document";
+import { boolean } from "fp-ts";
 
 class Face {
     settings;
@@ -15,12 +16,25 @@ class Face {
     }
 
     updateDisplay() {
+        // Which clock face is active?
+        var roman = true;
+        if(this.settings.arabicNumerals) {
+            document.getElementById("numbers").style.visibility = "visible";
+            document.getElementById("numerals").style.visibility = "hidden";
+            roman = false;
+        }
+        else {
+            document.getElementById("numbers").style.visibility = "hidden";
+            document.getElementById("numerals").style.visibility = "visible";
+        }
+
         // Is AOD inactive and the display is on?
         if (!display.aodActive && display.on) {
             document.getElementsByClassName("tertiary").forEach((item, index) => {
                 item.style.visibility = "visible";
             });
-            document.getElementById("numbers").style.visibility = "visible";
+            if(roman) document.getElementById("numerals").style.visibility = "visible";
+            else document.getElementById("numbers").style.visibility = "visible";
             document.getElementById("seconds").style.visibility = "visible";
             document.getElementById("steps").style.visibility = "visible";
             document.getElementById("distance").style.visibility = "visible";
@@ -30,6 +44,7 @@ class Face {
             document.getElementsByClassName("tertiary").forEach((item, index) => {
                 item.style.visibility = "hidden";
             });
+            document.getElementById("numerals").style.visibility = "hidden";
             document.getElementById("numbers").style.visibility = "hidden";
             document.getElementById("seconds").style.visibility = "hidden";
             document.getElementById("steps").style.visibility = "hidden";
@@ -45,8 +60,8 @@ class Face {
         }
         else if (this.settings.hideDate && !display.aodActive && display.on) {
             this.dateBox.style.visibility = "hidden";
-            document.getElementById("iii").style.visibility = "visible";
-            document.getElementById("3").style.visibility = "visible";
+            document.getElementById("iii").style.visibility = "inherit";
+            document.getElementById("3").style.visibility = "inherit";
         }
         else {
             this.dateBox.style.visibility = "hidden";
@@ -62,8 +77,8 @@ class Face {
         }
         else if (this.settings.hideWeather && !display.aodActive && display.on) {
             document.getElementById("weatherBox").style.visibility = "hidden";
-            document.getElementById("ix").style.visibility = "visible";
-            document.getElementById("9").style.visibility = "visible";
+            if(roman) document.getElementById("ix").style.visibility = "inherit";
+            else document.getElementById("9").style.visibility = "inherit";
         }
         else {
             document.getElementById("weatherBox").style.visibility = "hidden";
@@ -79,8 +94,8 @@ class Face {
         }
         else if (this.settings.hideHeartRate && !display.aodActive && display.on) {
             document.getElementById("heartrateBox").style.visibility = "hidden";
-            document.getElementById("vi").style.visibility = "visible";
-            document.getElementById("6").style.visibility = "visible";
+            if(roman) document.getElementById("vi").style.visibility = "inherit";
+            else document.getElementById("6").style.visibility = "inherit";
         }
         else {
             document.getElementById("heartrateBox").style.visibility = "hidden";
